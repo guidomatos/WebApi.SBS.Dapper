@@ -10,9 +10,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Swashbuckle.AspNetCore.SwaggerUI;
 using WebApi.SBS.ApplicationCore.Interfaces.Repositories;
 using WebApi.SBS.ApplicationCore.Interfaces.Services;
 using WebApi.SBS.ApplicationCore.Services;
+using WebApi.SBS.Core.Swagger;
 using WebApi.SBS.Infrastructure.Repositories;
 
 namespace WebApi.SBS
@@ -30,6 +32,8 @@ namespace WebApi.SBS
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            services.AddSwaggerGen();
 
             //Repositories
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
@@ -50,6 +54,15 @@ namespace WebApi.SBS
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint(SwaggerConfiguration.EndpointUrl, SwaggerConfiguration.InfoVersion);
+                c.DocumentTitle = SwaggerConfiguration.InfoTitle;
+                c.DocExpansion(DocExpansion.None);
+            });
 
             app.UseEndpoints(endpoints =>
             {
