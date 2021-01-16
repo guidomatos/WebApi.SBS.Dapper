@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -34,6 +35,28 @@ namespace WebApi.SBS
             services.AddControllers();
 
             services.AddSwaggerGen();
+
+            #region "Api Versioning"
+            // Add API Versioning to the Project
+            services.AddApiVersioning(config =>
+            {
+                // Specify the default API Version as 1.0
+                config.DefaultApiVersion = new ApiVersion(1, 0);
+                // If the client hasn't specified the API version in the request, use the default API version number
+                config.AssumeDefaultVersionWhenUnspecified = true;
+                // Advertise the API versions supported for the particular endpoint
+                config.ReportApiVersions = true;
+
+                config.ApiVersionReader = new MediaTypeApiVersionReader("v");
+
+
+                //HTTP Header based versioning
+                //config.ApiVersionReader = new HeaderApiVersionReader("x-api-version");
+
+                //config.ApiVersionReader = ApiVersionReader.Combine(new HeaderApiVersionReader("x-api-version"), new QueryStringApiVersionReader("api-version"));
+
+            });
+            #endregion
 
             //Repositories
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
